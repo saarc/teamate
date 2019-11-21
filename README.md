@@ -8,7 +8,7 @@ hyperledger fabric-docker images are installed
 GOPATH are configured
 hyperledger bineries are installed (cryptogen, configtxgen ... etcs)
 
-# - was network
+# -network
 ## 1. generating crypto-config directory, genesis.block, channel and anchor peer transactions
 cd network
 
