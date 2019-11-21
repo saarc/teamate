@@ -17,7 +17,7 @@ cd network
 ## 2. starting the network, create channel and join 
 ./start.sh
 
-# - chaincode
+# -chaincode
 ## 3. chaincode install, instsantiate and test(invoke, query, invoke)
 ./cc_tea.sh
 
