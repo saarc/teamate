@@ -33,7 +33,7 @@ node enrollAdmin.js
 node registerUser.js
 
 ## 6. server start
-node sever.js
+node server.js
 
 ## 7. open web browser and connect to localhost:8080
 
