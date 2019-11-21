@@ -12,6 +12,7 @@ hyperledger bineries are installed (cryptogen, configtxgen ... etcs)
 # 1. generating crypto-config directory, genesis.block, channel and anchor peer transactions
 cd network
 ./generate.sh
+
 # 2. starting the network, create channel and join 
 ./start.sh
 
@@ -21,13 +22,17 @@ cd network
 
 ## application
 cd ../application
+
 # 4. nodejs module install
 npm install
+
 # 5. certification works
 node enrollAdmin.js
 node registerUser.js
+
 # 6. server start
 node sever.js
+
 # 7. open web browser and connect to localhost:8080
 
 
