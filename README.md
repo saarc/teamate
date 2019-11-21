@@ -29,6 +29,7 @@ npm install
 
 # 5. certification works
 node enrollAdmin.js
+
 node registerUser.js
 
 # 6. server start
