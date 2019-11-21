@@ -8,19 +8,20 @@ hyperledger fabric-docker images are installed
 GOPATH are configured
 hyperledger bineries are installed (cryptogen, configtxgen ... etcs)
 
-## network
+# network
 # 1. generating crypto-config directory, genesis.block, channel and anchor peer transactions
 cd network
+
 ./generate.sh
 
 # 2. starting the network, create channel and join 
 ./start.sh
 
-## chaincode
+# chaincode
 # 3. chaincode install, instsantiate and test(invoke, query, invoke)
 ./cc_tea.sh
 
-## application
+# application
 cd ../application
 
 # 4. nodejs module install
