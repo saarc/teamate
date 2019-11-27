@@ -1,0 +1,36 @@
+<html>
+    <head>
+        <%- include('partials/head') %>
+    </head>
+
+    <body style="background-color: #fafafa;">
+        <%- include('partials/black-navbar') %>
+    
+        <div class="form-section">
+            <div class="form-title">
+                새로운 프로젝트 만들기
+            </div>
+    
+            <form action="/project" method="post">
+                <div class="form-new">
+                    프로젝트 이름 <br>
+                    <input class="form-input" type="text" placeholder="예) 티메이트" name="title">
+                </div>
+
+                <div class="form-new">
+                    프로젝트 한줄 소개 <br>
+                    <input class="form-input" type="text" placeholder="예) 하이퍼레저 블록체인 기반 팀 빌딩 플랫폼 서비스" name="detail" >
+                </div>
+                <div class="form-new">
+                    프로젝트 세부 설명 <br>
+                    <textarea class="form-textarea"nname="content" placeholder="프로젝트의 세부사항을 자세하게 적어주세요." cols="40" rows="8" name="content" ></textarea>
+                </div>
+
+                <div style="text-align: center;"> 
+                    <button type="submit" class="form-button">생성하기</button>
+                </div>
+            </form>
+        </div>
+
+    </body>
+</html>

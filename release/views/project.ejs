@@ -1,0 +1,59 @@
+<html>
+    <head>
+        <%- include('partials/head') %>
+    </head>
+
+    <body>
+        <%- include('partials/black-navbar') %>
+
+    <!-- <div class="image-cover" style="background-image: url('../images/project.jpg'); height: 450px;" >
+            <div class="filter"></div>
+            <div class="main-text"> PROJECT </div>
+    
+            <button type="button" class="about-btn" style="margin-top: 20px;" onclick="location.href='/project/new'">NEW PROJECT</button>
+        </div> -->
+
+        <!-- <div class="section" id="grid">
+            <% if (project !== null){
+                project.forEach((project)=>{ %>
+                    <a href="/project/<%= project._id %>">
+                        <div class="card">
+                            <img src="./images/note.jpg" class="card-image">
+                            <div class="card-title">
+                                <%= project.title %>
+                            </div>
+                            <div class="card-content">
+                                <%= project.detail %>
+                            </div>
+                            <div class="card-date">
+                                <%= project.createdAt %>
+                            </div>
+                        </div>
+                    </a>
+            <%  })} %>
+        </div> -->
+        <div class="container">
+            <div class="row">
+            <% if (project !== null){ project.forEach((project)=>{ %>
+                <div class="col-md-4">
+                    <a href="/project/<%= project._id %>">
+                        <div class="card">
+                            <img src="./images/note.jpg" class="card-image">
+                            <div class="card-title">
+                                <%= project.title %>
+                            </div>
+                            <div class="card-content">
+                                <%= project.detail %>
+                            </div>
+                            <div class="card-date">
+                                <%= project.createdAt %>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <%  })} %>
+            </div>
+        </div>
+        <%- include('partials/footer')  %>
+    </body>
+</html>

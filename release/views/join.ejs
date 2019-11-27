@@ -1,0 +1,33 @@
+<head>
+    <%- include('partials/head') %>
+</head>
+
+<body style="background-color: #fafafa;">
+  <%- include('partials/black-navbar') %>
+
+  <div class="section">
+      <div class="form-section">
+        <div class="form-title">
+            회원가입하기
+        </div>
+
+        <form action="/join" method="post">
+            <div class="form-new"> 이메일<br>
+                <input class="form-input" type="text" name="email" placeholder="email을 입력해주세요"> <br>
+            </div>
+            <div class="form-new"> 비밀번호 <br>
+                <input class="form-input" type="password" name="password" placeholder="비밀번호를 입력해주세요"> <br>
+            </div>
+    
+            <div style="text-align: center; margin-top: 50px;"> 
+                <button type="submit" style="margin-bottom: 0px !important;" class="form-button">회원가입</button>
+            </div>
+        </form>
+
+        <div style="text-align: center;">
+            <span style="font-size: 14px; color: gray; ">이미 회원이신가요? <a href="/login">로그인하기</a></span>
+        </div>
+      </div>
+  </div>
+</body>
+

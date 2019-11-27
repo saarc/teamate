@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+   <!-- jQuery AJAX -->
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+   
+   <script>
+      $(document).ready(function(){
+        $("button").click(function(){
+          $.get("../../api/query", function(data, status){
+
+              $("#div2").empty();
+
+              for(var i = 0; i<data.length; i++)
+              {
+                $("#div2").append(JSON.stringify(data[i])+"<br>");
+              }
+
+          });
+        });
+      });
+    </script>
+  <title>Myproject Page</title>
+</head>
+<body>
+  <h1>Welcome</h1>
+  <p>Select A Nextpage</p>
+  <a href="./api/querykey">Query a key</a>
+  <br>
+  <a href="./api/createkey">Create a key</a>
+
+  <br>
+  <br>
+  <br>
+  <button>Query All Keys</button>
+
+  <div id="div1"><h2>Sacc Query Result</h2></div>
+  <div id="div2"></div>
+
+</body>
+</html>

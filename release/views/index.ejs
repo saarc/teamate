@@ -1,0 +1,82 @@
+<html>
+    <head>
+        <%- include('partials/head') %>
+    </head>
+
+    <body>
+        <%- include('partials/navbar') %>
+        <div class="jumbotron image-cover" style="text-align: center;  background-image: url('../images/main.jpg');">
+            <span style="font-size: 4rem; color: white; font-weight: 900 !important;">Cowork Now!</span>
+        </div>
+
+        <div class="container">
+            <div class="title">Project</div>
+            <div class="row">
+            <% if (project !== null){ project.forEach((project)=>{ %>
+                <div class="col-md-4">
+                    <a href="/project/<%= project._id %>">
+                        <div class="card">
+                            <img src="./images/note.jpg" class="card-image">
+                            <div class="card-title">
+                                <%= project.title %>
+                            </div>
+                            <div class="card-content">
+                                <%= project.detail %>
+                            </div>
+                            <div class="card-date">
+                                <%= project.createdAt %>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <%  })} %>
+            </div>
+        </div>
+        <div style="text-align: center;">
+            <button class="more-btn" name="button" onclick="location.href='/project';">SHOW MORE</button>
+        </div>
+<!-- 
+        <div class="container">
+                <div class="title">Mate</div>
+                <div class="row">
+                <%# if (user !== null){ user.forEach((user)=>{ %>
+                    <div class="col-md-4">
+                        <a href="/project/<%# project._id %>">
+                            <div class="card">
+                                <img src="./images/note.jpg" class="card-image">
+                                <div class="card-title">
+                                    <%#= user.email %>
+                                </div>
+                                <div class="card-content">
+                                    <%#= user.detail %>
+                                </div>
+                                <div class="card-date">
+                                    <%#= project.createdAt %>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <%#  })} %>
+                </div>
+            </div> -->
+
+
+        <div style="text-align: center; margin-bottom: 40px;">
+            <button class="more-btn" name="button" onclick="location.href='/mate';">SHOW MORE</button>
+        </div>
+
+
+        <div class="image-cover" style="background-image: url('../images/cowork.jpg')">
+            <div class="filter"></div>
+            <div class="main-text">
+            MAKE SOMETHING TOGETHER
+            </div>
+
+            <div class="sub-text">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            </div>
+        </div>
+    
+        <%- include('partials/footer')  %>
+    </body>
+</html> 
