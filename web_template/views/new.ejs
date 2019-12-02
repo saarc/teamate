@@ -1,0 +1,21 @@
+<html>
+    <head>
+        <%- include('partials/head') %>
+    </head>
+
+    <body>
+        <%- include('partials/navbar') %>
+        <div class="section">
+            <div class="header">
+                <h1> 새 아이템을 추가합니다!</h1>
+            </div>
+            <form action="/items" method="POST">
+                <input type="text" class="newitem-form" name="name" placeholder="추가할 아이템의 이름을 입력하세요"> <br>
+                <input type="text" class="newitem-form" name="comment" placeholder="추가할 아이템의 한줄 설명을 입력하세요 (20자 이내, 카드에 노출)"> <br>
+                <textarea type="text" class="newitem-form" rows="20" name="detail" placeholder="추가할 아이템의 상세 설명을 입력하세요"></textarea> <br>
+                <input class="btn btn-warning newitem-btn" type="submit">
+                </div>
+            </form>
+        </div>
+    </body>
+</html>

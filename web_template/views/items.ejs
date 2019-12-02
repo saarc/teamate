@@ -1,0 +1,31 @@
+<html>
+<head>
+    <%- include('partials/head') %>
+</head>
+
+<body>
+    <%- include('partials/navbar') %>
+    <div class="section">
+        <div class="header">
+            <h1>Item</h1>
+            <h2>아이템의 목록 리스트가 있는 페이지</h2>
+            <a href="/items/new"><button class="btn btn-info"> 새 아이템 추가하기</button></a>
+        </div>
+
+        <div class=row>
+            <% if (item !== null){item.forEach((item)=>{ %>
+            <div class="col-lg-4">
+                <a href="/items/:itemId">
+                    <div class="card">
+                        <div class="card-image"></div>
+                        <div class="card-title"><%= item.name %></div>
+                        <div class="card-comment"><%= item.comment %> </div>
+                    </div>
+                </a>
+            </div>
+            <%  })} %>
+        </div>
+    </div>
+</body>
+
+</html>

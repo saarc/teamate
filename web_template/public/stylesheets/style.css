@@ -1,0 +1,91 @@
+body{
+    background-color: #fafafa;
+}
+
+.section{
+    padding-left: 50px;
+    padding-right: 50px;
+}
+
+.header{
+    margin-top: 30px;
+    margin-bottom: 50px;
+}
+
+.card{
+    background-color: white;
+    box-shadow: 2px 2px 2px lightgray;
+    height: 450px;
+}
+
+.card .card-image{
+    top: 0;
+    height: 250px;
+    width: auto;
+    background-position-y: 50%;
+    background-image: url('../images/desk.jpg');
+    background-size: cover;
+}
+
+.card-title{
+    margin-top: 20px;
+    margin-left: 20px;
+    margin-right: 20px;
+    font-size: 20px;
+    font-weight: 500;
+}
+
+.card-comment{
+    margin-top: 20px;
+    margin-left: 20px;
+    margin-right: 20px;
+    font-size: 18px;
+    text-align: justify;
+    font-weight: 300;
+    line-height: 28px;
+}
+
+.newitem-form{
+    width: 50%;
+    padding: 10px 25px;
+    margin-bottom: 20px;
+}
+
+.newitem-btn{
+    padding: 10px 25px;
+    width: 10%;
+}
+
+.show-section{
+    width: 1200px;
+    margin-top: 30px;
+    padding: 40px 50px;
+    text-align: center;
+    min-height: 400px;
+    background-color: white;
+    box-shadow: 2px 2px 2px lightgray;
+}
+
+.item-name{
+    font-size: 24px;
+    font-weight: 500;
+}
+
+.item-comment{
+    font-size: 20px;
+    font-weight: 300;
+    margin-top: 10px;
+}
+
+.item-detail{
+    font-size: 18px;
+    font-weight: 200;
+    margin-top: 50px;
+    text-align: justify !important;
+    line-height: 30px;
+}
+
+.align-center{
+    /* text-align: center; */
+    text-align: -webkit-center;
+}
