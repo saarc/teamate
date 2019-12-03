@@ -9,12 +9,18 @@
             <div class="show-section">
                 <div class="item-name"> <%= item.name %></div>
                 <div class="item-comment"> <%= item.comment %></div>
-
+                <div class="item-sub">
+                <div class="item-user"> <%= item.user %></div>
+                <% if(user.email == item.user){ %>
+                    <div class="item-button"><a href="/items/delete/<%= item.itemId %>">삭제하기</a></div>
+                    <div class="item-button"><a href="/items/update/<%= item.itemId %>">수정하기</a></div>
+                </div>
+                <% } %>
                 <hr>
                 <div class="item-detail"> <%= item.detail %></div>
+
             </div>
         </div>
-
-    
     </body>
 </html>
+

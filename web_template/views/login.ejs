@@ -1,7 +1,20 @@
-<h1>Login</h1>
+<html>
+    <head>
+        <%- include('partials/head') %>
+    </head>
+    <body>
+        <div class="login-section">
+            <div class="header">            
+                <h1>Login</h1>
+                <h2>로그인하세요!</h2>
+                <hr>
+            </div>
+            <form class="login-form" action="/login" method="POST">
+                <input class="newitem-form" type="text" name="email" placeholder="이메일을 입력하세요">  <br>
+                <input class="newitem-form" type="password" name="password" placeholder="비밀번호를 입력하세요"> <br>
+                <input class="btn btn-primary newitem-btn" type="submit">
+            </form>
+        </div>
+    </body>
 
-<form action="/login" method="POST">
-    <input type="text" name="email" placeholder="이메일을 입력하세요"> 
-    <input type="password" name="password" placeholder="비밀번호를 입력하세요"> 
-    <input type="submit">
-</form>
+</html>

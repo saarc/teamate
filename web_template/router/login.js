@@ -13,7 +13,7 @@ router.get('/', function(req, res) {
 });
 
 router.post('/', passport.authenticate('local', { failureRedirect: '/login', failureFlash: true }), function(req, res) {
-    console.log("로그인")
+    console.log("로그인 성공")
     res.redirect('/');
 });
   

@@ -27,7 +27,7 @@ router.post('/',  function(req, res, next) {
         console.log('error while user register!', err);
         return next(err);
       }
-      console.log('user registered!');
+      console.log('회원가입 성공');
       res.redirect('/');
     });
   })

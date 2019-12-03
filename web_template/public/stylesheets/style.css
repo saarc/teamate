@@ -12,6 +12,10 @@ body{
     margin-bottom: 50px;
 }
 
+.row{
+    margin-bottom: 30px;
+}
+
 .card{
     background-color: white;
     box-shadow: 2px 2px 2px lightgray;
@@ -57,11 +61,32 @@ body{
 }
 
 .show-section{
+    position: absolute;
+    margin-left: -600px;
+    left:50%; 
     width: 1200px;
-    margin-top: 30px;
     padding: 40px 50px;
     text-align: center;
-    min-height: 400px;
+    min-height: 300px;
+    height: auto;
+    background-color: white;
+    box-shadow: 2px 2px 2px lightgray;
+}
+
+.login-form{
+    margin-top: 50px;
+}
+
+.login-section{
+    position: absolute;
+    margin-left: -600px;
+    top: 10%;
+    left:50%; 
+    width: 1200px;
+    padding: 40px 50px;
+    text-align: center;
+    min-height: 300px;
+    height: auto;
     background-color: white;
     box-shadow: 2px 2px 2px lightgray;
 }
@@ -85,7 +110,20 @@ body{
     line-height: 30px;
 }
 
+.item-sub{
+    margin-bottom: 30px;
+}
+.item-user{
+    font-size: 16px;
+    color: gray;
+    float: left;
+}
+
+.item-button{
+    float: right;
+    margin-left: 20px;
+}
+
 .align-center{
-    /* text-align: center; */
     text-align: -webkit-center;
 }

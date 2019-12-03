@@ -6,7 +6,8 @@ const itemSchema = new mongoose.Schema({
     itemId: {type: Number},
     name: String,
     comment: String,
-    detail: String
+    detail: String,
+    user: String
 });
 
 itemSchema.plugin(autoIncrement.plugin,{

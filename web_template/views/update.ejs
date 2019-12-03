@@ -1,0 +1,31 @@
+<html>
+    <head>
+        <base href="/">
+        <%- include('partials/head') %>
+    </head>
+
+    <body>
+        <%- include('partials/navbar') %>
+        <div class="section">
+            <div class="header">
+                <h1> Update </h1>
+                <h2>아이템을 수정합니다</h2>
+            </div>
+            <form action="/items/<%= item.itemId %>" method="POST">
+                <input type="text" class="newitem-form" name="name" value="<%= item.name %>" placeholder="추가할 아이템의 이름을 입력하세요"> <br>
+                <input type="text" class="newitem-form" name="comment" value="<%= item.comment %>" placeholder="추가할 아이템의 한줄 설명을 입력하세요 (20자 이내, 카드에 노출)"> <br>
+                <!-- 2019-12-01 textarea의 value옵션이 작동하지 않음, jquery로 구현했으나 확인 필요 -->
+                <!-- 2019-12-02 수정 <textarea> <%#= DB에서가져올 정보 %> </textarea> -->
+                <textarea type="text" id="test" class="newitem-form" rows="20" name="detail" placeholder="추가할 아이템의 상세 설명을 입력하세요"></textarea> <br>
+                <input class="btn btn-warning newitem-btn" type="submit">
+                </div>
+            </form>
+        </div>
+    </body>
+</html>
+
+<!-- 2019-12-02 -->
+<script>
+    var value = "<%= item.detail %>"
+    $("#test").html(value);
+</script>

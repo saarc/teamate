@@ -26,20 +26,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-// Passport
-// var LocalStrategy = require('passport-local').Strategy;
-var passport = require('passport')
-var session = require('express-session')
-// flash는 session이 필요하므로 반드시 session 아래에 정의해야 함
-var flash = require('connect-flash');
-app.use(session({
-  secret: 'keyboard cat',
-  resave: false,
-  saveUninitialized: true
-}))
-app.use(passport.initialize())
-app.use(passport.session())
-app.use(flash())
 
 // DB
 var mongoose = require('mongoose');
@@ -56,6 +42,21 @@ db.once('open', function(){
     console.log('MongoDB connection success!')
 })
 
+
+// Passport
+var passport = require('passport')
+var session = require('express-session')
+// flash는 session이 필요하므로 반드시 session 아래에 정의해야 함
+var flash = require('connect-flash');
+app.use(session({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true
+}))
+app.use(passport.initialize())
+app.use(passport.session())
+app.use(flash())
+
 // Router
 var indexRouter = require('./router/index');
 var loginRouter = require('./router/login');
@@ -69,7 +70,7 @@ app.use('/login', loginRouter);
 app.use('/join', joinRouter);
 app.use('/logout', logoutRouter);
 app.use('/items', itemsRouter);
-app.use('/items/new', newRouter);
+app.use('/new', newRouter);
 
 // Qeury all cars page
 app.get('/api/query', async function (req, res) {

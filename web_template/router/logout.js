@@ -6,7 +6,7 @@ var User = require('../model/user');
 
 router.get('/', function(req, res) {
     req.logout();
-    console.log("로그아웃");
+    console.log("로그아웃 성공");
     res.redirect('/');
 });
 

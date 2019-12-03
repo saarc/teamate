@@ -1,9 +1,22 @@
-<h1>
-    Join
-</h1>
-<form aciton="/join" method="POST">
-    <input type="text" name="name" placeholder="name을 입력하세요">
-    <input type="text" name="email" placeholder="email을 입력하세요">
-    <input type="password" name="password" placeholder="password을 입력하세요">
-    <input type="submit">
-</form>
+<html>
+    <head> 
+        <%- include('partials/head') %>
+    </head>
+
+    <body>
+        <div class="login-section">
+            <div class="header">
+                <h1>Join</h1>
+                <h2>회원가입하세요!</h2>
+            </div>
+            <hr>
+            <form class="login-form" aciton="/join" method="POST">
+                <input class="newitem-form" type="text" name="name" placeholder="name을 입력하세요"> <br>
+                <input class="newitem-form" type="text" name="email" placeholder="email을 입력하세요"> <br>
+                <input class="newitem-form" type="password" name="password" placeholder="password을 입력하세요"> <br>
+                <input class="btn btn-warning newitem-btn" type="submit">
+            </form>
+        </div>
+    </body>
+
+</html>
