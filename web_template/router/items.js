@@ -17,9 +17,10 @@ router.get('/', function(req, res, next) {
 
 // show
 router.get('/:id', function(req, res, next){
-    Item.findOne({ id: req.params.itemId }, (err, item)=>{
+    console.log("[SHOW GET]item id: " + req.params.id);
+    Item.findOne({ itemId: req.params.id }, (err, item)=>{
         if(err) return console.log(err);
-        res.render('show', {item: item, user: req.user})
+        res.render('show', {title: "item 조회", item: item, user: req.user})
     })
 })
 
@@ -64,6 +65,48 @@ router.get('/delete/:id', (req, res) => {
       res.redirect('/');
     });
 });
-  
+
+//create an apply
+router.post('/:id/applies', function(req, res, next){
+    var newapply = { body: req.body.apply, author: req.body.user }
+
+    console.log(newapply)
+    Item.findOne({ itemId: req.params.id }, function(err, item){
+
+        item.applies.push(newapply);
+        item.save();
+        console.log("신청 성공");
+        res.redirect('/');
+    })
+
+    // Item.updateOne({ id: req.params.id }, 
+    //     { $push: { applies: { body: req.body.apply, author: req.body.user }}},
+    //      function(err, item){
+    //     if(err) return res.json({success:false, message:err});
+    //     res.redirect('/');
+    // });
+});
+
+// admit an apply
+router.post('/:id/admit', function(req, res, next){
+    var index = req.body.index;
+    Item.findOne({ itemId: req.params.id }, function(err, item){
+        if(err) return res.json({success:false, message:err});
+        item.applies[index].$set({status: "matched"});
+        item.save();
+        console.log(item.applies[index].status);
+        res.redirect('/')
+    })
+})
+
+//destroy a comment
+// router.delete('/:id/applies/:applyId', function(req,res){
+//     Post.update({_id:req.params.postId},{$pull:{comments:{_id:req.params.commentId}}},
+//         function(err,post){
+//         if(err) return res.json({success:false, message:err});
+//         res.redirect('/posts/'+req.params.postId+"?"+
+//                         req._parsedUrl.query.replace(/_method=(.*?)(&|$)/ig,""));
+//     });
+// }); 
 
 module.exports = router;

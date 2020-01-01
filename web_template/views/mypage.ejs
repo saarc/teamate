@@ -1,0 +1,36 @@
+<html>
+    <head>
+        <%- include('partials/head') %>
+    </head>
+
+    <body>
+        <%- include('partials/navbar') %>
+        <div class="section">
+            <div class="header">
+                <h1> My page </h1>
+                <h2> 관리 페이지</h2>   
+            </div>
+            이름 : <%= user.name %> <br>
+            이메일 : <%= user.email %> <br>
+
+
+            <h4 id="myitem"> 내가 만든 프로젝트 목록 </h4>
+            <% if (items !== null){items.forEach((item)=>{ %>ㅌ
+                <a href="/items/<%= item.itemId %>">
+                    <%= item.name %>
+                    <% item.applies.forEach((apply)=>{ %>
+                        <%= apply.body %>
+                        <%= apply.author %>
+                    <% }) %>
+                </a>
+            <%  })} %>
+
+
+            <h4>진행중인 프로젝트 목록</h4>
+
+
+            <h4>완료한 프로젝트 목록</h4>
+
+        </div>
+    </body>
+</html>

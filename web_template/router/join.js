@@ -9,9 +9,10 @@ passport.deserializeUser(User.deserializeUser());
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    res.render('join');
+    res.render('join', {title: "Join"});
 });
 
+// 회원가입 로직
 router.post('/',  function(req, res, next) {
     console.log(req.body.email);
     console.log(req.body.name);
@@ -22,6 +23,8 @@ router.post('/',  function(req, res, next) {
       console.log(err)
     }
   
+    // mongoose register method 
+    // chaincode 유저 등록 구현 필요
     User.register(new User({name: req.body.name, email: req.body.email}), req.body.password, function(err) {
       if (err) {
         console.log('error while user register!', err);

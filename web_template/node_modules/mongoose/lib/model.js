@@ -18,6 +18,8 @@ const Query = require('./query');
 const RemoveOptions = require('./options/removeOptions');
 const SaveOptions = require('./options/saveOptions');
 const Schema = require('./schema');
+const TimeoutError = require('./error/timeout');
+const ValidationError = require('./error/validation');
 const VersionError = require('./error/version');
 const ParallelSaveError = require('./error/parallelSave');
 const applyQueryMiddleware = require('./helpers/query/applyQueryMiddleware');
@@ -307,8 +309,14 @@ Model.prototype.$__handleSave = function(options, callback) {
         callback(null, ret);
       });
     } else {
-      this.$__reset();
-      callback();
+      this.constructor.exists(this.$__where())
+        .then((documentExists)=>{
+          if (!documentExists) throw new DocumentNotFoundError(this.$__where(),this.constructor.modelName);
+
+          this.$__reset();
+          callback();
+        })
+        .catch(callback);
       return;
     }
 
@@ -454,7 +462,9 @@ Model.prototype.save = function(options, fn) {
 
   fn = this.constructor.$handleCallbackError(fn);
 
-  return utils.promiseOrCallback(fn, this.constructor.$wrapCallback(cb => {
+  return utils.promiseOrCallback(fn, cb => {
+    cb = this.constructor.$wrapCallback(cb);
+
     if (parallelSave) {
       this.$__handleReject(parallelSave);
       return cb(parallelSave);
@@ -473,7 +483,7 @@ Model.prototype.save = function(options, fn) {
       }
       cb(null, this);
     });
-  }), this.constructor.events);
+  }, this.constructor.events);
 };
 
 /*!
@@ -898,9 +908,10 @@ Model.prototype.remove = function remove(options, fn) {
 
   fn = this.constructor.$handleCallbackError(fn);
 
-  return utils.promiseOrCallback(fn, this.constructor.$wrapCallback(cb => {
+  return utils.promiseOrCallback(fn, cb => {
+    cb = this.constructor.$wrapCallback(cb);
     this.$__remove(options, cb);
-  }), this.constructor.events);
+  }, this.constructor.events);
 };
 
 /**
@@ -933,9 +944,10 @@ Model.prototype.deleteOne = function deleteOne(options, fn) {
 
   fn = this.constructor.$handleCallbackError(fn);
 
-  return utils.promiseOrCallback(fn, this.constructor.$wrapCallback(cb => {
+  return utils.promiseOrCallback(fn, cb => {
+    cb = this.constructor.$wrapCallback(cb);
     this.$__deleteOne(options, cb);
-  }), this.constructor.events);
+  }, this.constructor.events);
 };
 
 /*!
@@ -1279,7 +1291,9 @@ Model.createCollection = function createCollection(options, callback) {
 
   callback = this.$handleCallbackError(callback);
 
-  return utils.promiseOrCallback(callback, this.$wrapCallback(cb => {
+  return utils.promiseOrCallback(callback, cb => {
+    cb = this.$wrapCallback(cb);
+
     this.db.createCollection(this.collection.collectionName, options, utils.tick((error) => {
       if (error) {
         return cb(error);
@@ -1287,7 +1301,7 @@ Model.createCollection = function createCollection(options, callback) {
       this.collection = this.db.collection(this.collection.collectionName, options);
       cb(null, this.collection);
     }));
-  }), this.events);
+  }, this.events);
 };
 
 /**
@@ -1316,7 +1330,49 @@ Model.createCollection = function createCollection(options, callback) {
 Model.syncIndexes = function syncIndexes(options, callback) {
   _checkContext(this, 'syncIndexes');
 
-  const dropNonSchemaIndexes = (cb) => {
+  callback = this.$handleCallbackError(callback);
+
+  return utils.promiseOrCallback(callback, cb => {
+    cb = this.$wrapCallback(cb);
+
+    this.createCollection(err => {
+      if (err) {
+        return cb(err);
+      }
+      this.cleanIndexes((err, dropped) => {
+        if (err != null) {
+          return cb(err);
+        }
+        this.createIndexes(options, err => {
+          if (err != null) {
+            return cb(err);
+          }
+          cb(null, dropped);
+        });
+      });
+    });
+  }, this.events);
+};
+
+/**
+ * Deletes all indexes that aren't defined in this model's schema. Used by
+ * `syncIndexes()`.
+ *
+ * The returned promise resolves to a list of the dropped indexes' names as an array
+ *
+ * @param {Function} [callback] optional callback
+ * @return {Promise|undefined} Returns `undefined` if callback is specified, returns a promise if no callback.
+ * @api public
+ */
+
+Model.cleanIndexes = function cleanIndexes(callback) {
+  _checkContext(this, 'cleanIndexes');
+
+  callback = this.$handleCallbackError(callback);
+
+  return utils.promiseOrCallback(callback, cb => {
+    const collection = this.collection;
+
     this.listIndexes((err, indexes) => {
       if (err != null) {
         return cb(err);
@@ -1349,44 +1405,23 @@ Model.syncIndexes = function syncIndexes(options, callback) {
 
       dropIndexes(toDrop, cb);
     });
-  };
 
-  const dropIndexes = (toDrop, cb) => {
-    let remaining = toDrop.length;
-    let error = false;
-    toDrop.forEach(indexName => {
-      this.collection.dropIndex(indexName, err => {
-        if (err != null) {
-          error = true;
-          return cb(err);
-        }
-        if (!error) {
-          --remaining || cb(null, toDrop);
-        }
-      });
-    });
-  };
-
-  callback = this.$handleCallbackError(callback);
-
-  return utils.promiseOrCallback(callback, this.$wrapCallback(cb => {
-    this.createCollection(err => {
-      if (err) {
-        return cb(err);
-      }
-      dropNonSchemaIndexes((err, dropped) => {
-        if (err != null) {
-          return cb(err);
-        }
-        this.createIndexes(options, err => {
+    function dropIndexes(toDrop, cb) {
+      let remaining = toDrop.length;
+      let error = false;
+      toDrop.forEach(indexName => {
+        collection.dropIndex(indexName, err => {
           if (err != null) {
+            error = true;
             return cb(err);
           }
-          cb(null, dropped);
+          if (!error) {
+            --remaining || cb(null, toDrop);
+          }
         });
       });
-    });
-  }), this.events);
+    }
+  });
 };
 
 /*!
@@ -1446,14 +1481,16 @@ Model.listIndexes = function init(callback) {
 
   callback = this.$handleCallbackError(callback);
 
-  return utils.promiseOrCallback(callback, this.$wrapCallback(cb => {
+  return utils.promiseOrCallback(callback, cb => {
+    cb = this.$wrapCallback(cb);
+
     // Buffering
     if (this.collection.buffer) {
       this.collection.addQueue(_listIndexes, [cb]);
     } else {
       _listIndexes(cb);
     }
-  }), this.events);
+  }, this.events);
 };
 
 /**
@@ -1495,14 +1532,16 @@ Model.ensureIndexes = function ensureIndexes(options, callback) {
 
   callback = this.$handleCallbackError(callback);
 
-  return utils.promiseOrCallback(callback, this.$wrapCallback(cb => {
+  return utils.promiseOrCallback(callback, cb => {
+    cb = this.$wrapCallback(cb);
+
     _ensureIndexes(this, options || {}, error => {
       if (error) {
         return cb(error);
       }
       cb(null);
     });
-  }), this.events);
+  }, this.events);
 };
 
 /**
@@ -1533,6 +1572,7 @@ Model.createIndexes = function createIndexes(options, callback) {
 
 function _ensureIndexes(model, options, callback) {
   const indexes = model.schema.indexes();
+  let indexError;
 
   options = options || {};
 
@@ -1540,7 +1580,7 @@ function _ensureIndexes(model, options, callback) {
     if (err && !model.$caught) {
       model.emit('error', err);
     }
-    model.emit('index', err);
+    model.emit('index', err || indexError);
     callback && callback(err);
   };
 
@@ -1612,7 +1652,12 @@ function _ensureIndexes(model, options, callback) {
     model.collection[methodName](indexFields, indexOptions, utils.tick(function(err, name) {
       indexSingleDone(err, indexFields, indexOptions, name);
       if (err) {
-        return done(err);
+        if (!indexError) {
+          indexError = err;
+        }
+        if (!model.$caught) {
+          model.emit('error', err);
+        }
       }
       create();
     }));
@@ -2408,6 +2453,7 @@ Model.$where = function $where() {
  * @param {Object} [update]
  * @param {Object} [options] optional see [`Query.prototype.setOptions()`](http://mongoosejs.com/docs/api.html#query_Query-setOptions)
  * @param {Object} [options.lean] if truthy, mongoose will return the document as a plain JavaScript object rather than a mongoose document. See [`Query.lean()`](/docs/api.html#query_Query-lean) and [the Mongoose lean tutorial](/docs/tutorials/lean.html).
+ * @param {ClientSession} [options.session=null] The session associated with this query. See [transactions docs](/docs/transactions.html).
  * @param {Boolean|String} [options.strict] overwrites the schema's [strict mode option](http://mongoosejs.com/docs/guide.html#strict)
  * @param {Boolean} [options.omitUndefined=false] If true, delete any properties whose value is `undefined` when casting an update. In other words, if this is set, Mongoose will delete `baz` from the update in `Model.updateOne({}, { foo: 'bar', baz: undefined })` before sending the update to the server.
  * @param {Function} [callback]
@@ -2634,6 +2680,7 @@ Model.findByIdAndUpdate = function(id, update, options, callback) {
  * @param {Object} conditions
  * @param {Object} [options] optional see [`Query.prototype.setOptions()`](http://mongoosejs.com/docs/api.html#query_Query-setOptions)
  * @param {Boolean|String} [options.strict] overwrites the schema's [strict mode option](http://mongoosejs.com/docs/guide.html#strict)
+ * @param {ClientSession} [options.session=null] The session associated with this query. See [transactions docs](/docs/transactions.html).
  * @param {Function} [callback]
  * @return {Query}
  * @api public
@@ -2739,6 +2786,7 @@ Model.findByIdAndDelete = function(id, options, callback) {
  * @param {Object} [replacement] Replace with this document
  * @param {Object} [options] optional see [`Query.prototype.setOptions()`](http://mongoosejs.com/docs/api.html#query_Query-setOptions)
  * @param {Object} [options.lean] if truthy, mongoose will return the document as a plain JavaScript object rather than a mongoose document. See [`Query.lean()`](http://mongoosejs.com/docs/api.html#query_Query-lean).
+ * @param {ClientSession} [options.session=null] The session associated with this query. See [transactions docs](/docs/transactions.html).
  * @param {Boolean|String} [options.strict] overwrites the schema's [strict mode option](http://mongoosejs.com/docs/guide.html#strict)
  * @param {Boolean} [options.omitUndefined=false] If true, delete any properties whose value is `undefined` when casting an update. In other words, if this is set, Mongoose will delete `baz` from the update in `Model.updateOne({}, { foo: 'bar', baz: undefined })` before sending the update to the server.
  * @param {Function} [callback]
@@ -2829,6 +2877,7 @@ Model.findOneAndReplace = function(filter, replacement, options, callback) {
  *
  * @param {Object} conditions
  * @param {Object} [options] optional see [`Query.prototype.setOptions()`](http://mongoosejs.com/docs/api.html#query_Query-setOptions)
+ * @param {ClientSession} [options.session=null] The session associated with this query. See [transactions docs](/docs/transactions.html).
  * @param {Boolean|String} [options.strict] overwrites the schema's [strict mode option](http://mongoosejs.com/docs/guide.html#strict)
  * @param {Function} [callback]
  * @return {Query}
@@ -2894,6 +2943,7 @@ Model.findOneAndRemove = function(conditions, options, callback) {
  * @param {Object|Number|String} id value of `_id` to query by
  * @param {Object} [options] optional see [`Query.prototype.setOptions()`](http://mongoosejs.com/docs/api.html#query_Query-setOptions)
  * @param {Boolean|String} [options.strict] overwrites the schema's [strict mode option](http://mongoosejs.com/docs/guide.html#strict)
+ * @param {ClientSession} [options.session=null] The session associated with this query. See [transactions docs](/docs/transactions.html).
  * @param {Function} [callback]
  * @return {Query}
  * @see Model.findOneAndRemove #model_Model.findOneAndRemove
@@ -2991,7 +3041,8 @@ Model.create = function create(doc, options, callback) {
     }
   }
 
-  return utils.promiseOrCallback(cb, this.$wrapCallback(cb => {
+  return utils.promiseOrCallback(cb, cb => {
+    cb = this.$wrapCallback(cb);
     if (args.length === 0) {
       return cb(null);
     }
@@ -3063,7 +3114,7 @@ Model.create = function create(doc, options, callback) {
         }
       });
     });
-  }), this.events);
+  }, this.events);
 };
 
 /**
@@ -3394,7 +3445,8 @@ Model.bulkWrite = function(ops, options, callback) {
 
   callback = this.$handleCallbackError(callback);
 
-  return utils.promiseOrCallback(callback, this.$wrapCallback(cb => {
+  return utils.promiseOrCallback(callback, cb => {
+    cb = this.$wrapCallback(cb);
     each(validations, (fn, cb) => fn(cb), error => {
       if (error) {
         return cb(error);
@@ -3408,7 +3460,7 @@ Model.bulkWrite = function(ops, options, callback) {
         cb(null, res);
       });
     });
-  }), this.events);
+  }, this.events);
 };
 
 /**
@@ -3758,7 +3810,9 @@ Model.mapReduce = function mapReduce(o, callback) {
 
   callback = this.$handleCallbackError(callback);
 
-  return utils.promiseOrCallback(callback, this.$wrapCallback(cb => {
+  return utils.promiseOrCallback(callback, cb => {
+    cb = this.$wrapCallback(cb);
+
     if (!Model.mapReduce.schema) {
       const opts = {noId: true, noVirtualId: true, strict: false};
       Model.mapReduce.schema = new Schema({}, opts);
@@ -3795,7 +3849,7 @@ Model.mapReduce = function mapReduce(o, callback) {
 
       cb(null, res);
     });
-  }), this.events);
+  }, this.events);
 };
 
 /**
@@ -3871,6 +3925,105 @@ Model.aggregate = function aggregate(pipeline, callback) {
 };
 
 /**
+ * Casts and validates the given object against this model's schema, passing the
+ * given `context` to custom validators.
+ *
+ * ####Example:
+ *
+ *     const Model = mongoose.model('Test', Schema({
+ *       name: { type: String, required: true },
+ *       age: { type: Number, required: true }
+ *     });
+ *
+ *     try {
+ *       await Model.validate({ name: null }, ['name'])
+ *     } catch (err) {
+ *       err instanceof mongoose.Error.ValidationError; // true
+ *       Object.keys(err.errors); // ['name']
+ *     }
+ *
+ * @param {Object} obj
+ * @param {Array} pathsToValidate
+ * @param {Object} [context]
+ * @param {Function} [callback]
+ * @return {Promise|undefined}
+ * @api public
+ */
+
+Model.validate = function validate(obj, pathsToValidate, context, callback) {
+  return utils.promiseOrCallback(callback, cb => {
+    const schema = this.schema;
+    let paths = Object.keys(schema.paths);
+
+    if (pathsToValidate != null) {
+      const _pathsToValidate = new Set(pathsToValidate);
+      paths = paths.filter(p => {
+        const pieces = p.split('.');
+        let cur = pieces[0];
+        for (let i = 0; i < pieces.length; ++i) {
+          if (_pathsToValidate.has(cur)) {
+            return true;
+          }
+          cur += '.' + pieces[i];
+        }
+        return _pathsToValidate.has(p);
+      });
+    }
+
+    let remaining = paths.length;
+    let error = null;
+    for (const path of paths) {
+      const schematype = schema.path(path);
+      if (schematype == null) {
+        _checkDone();
+        continue;
+      }
+
+      const pieces = path.split('.');
+      let cur = obj;
+      for (let i = 0; i < pieces.length - 1; ++i) {
+        cur = cur[pieces[i]];
+      }
+
+      let val = get(obj, path, void 0);
+
+      if (val != null) {
+        try {
+          val = schematype.cast(val);
+          cur[pieces[pieces.length - 1]] = val;
+        } catch (err) {
+          error = error || new ValidationError();
+          error.addError(path, err);
+
+          _checkDone();
+          continue;
+        }
+      }
+
+      schematype.doValidate(val, err => {
+        if (err) {
+          error = error || new ValidationError();
+          if (err instanceof ValidationError) {
+            for (const _err of Object.keys(err.errors)) {
+              error.addError(`${path}.${err.errors[_err].path}`, _err);
+            }
+          } else {
+            error.addError(err.path, err);
+          }
+        }
+        _checkDone();
+      }, context);
+    }
+
+    function _checkDone() {
+      if (--remaining <= 0) {
+        return cb(error);
+      }
+    }
+  });
+};
+
+/**
  * Implements `$geoSearch` functionality for Mongoose
  *
  * This function does not trigger any middleware
@@ -3908,7 +4061,8 @@ Model.geoSearch = function(conditions, options, callback) {
 
   callback = this.$handleCallbackError(callback);
 
-  return utils.promiseOrCallback(callback, this.$wrapCallback(cb => {
+  return utils.promiseOrCallback(callback, cb => {
+    cb = this.$wrapCallback(cb);
     let error;
     if (conditions === undefined || !utils.isObject(conditions)) {
       error = new MongooseError('Must pass conditions to geoSearch');
@@ -3953,7 +4107,7 @@ Model.geoSearch = function(conditions, options, callback) {
         res.results[i].init(temp, {}, init);
       }
     });
-  }), this.events);
+  }, this.events);
 };
 
 /**
@@ -4024,6 +4178,7 @@ Model.geoSearch = function(conditions, options, callback) {
  * @param {boolean} [options.clone=false] When you do `BlogPost.find().populate('author')`, blog posts with the same author will share 1 copy of an `author` doc. Enable this option to make Mongoose clone populated docs before assigning them.
  * @param {Object|Function} [options.match=null] Add an additional filter to the populate query. Can be a filter object containing [MongoDB query syntax](https://docs.mongodb.com/manual/tutorial/query-documents/), or a function that returns a filter object.
  * @param {Boolean} [options.skipInvalidIds=false] By default, Mongoose throws a cast error if `localField` and `foreignField` schemas don't line up. If you enable this option, Mongoose will instead filter out any `localField` properties that cannot be casted to `foreignField`'s schema type.
+ * @param {Object} [options.options=null] Additional options like `limit` and `lean`.
  * @param {Function} [callback(err,doc)] Optional callback, executed upon completion. Receives `err` and the `doc(s)`.
  * @return {Promise}
  * @api public
@@ -4042,9 +4197,10 @@ Model.populate = function(docs, paths, callback) {
 
   callback = this.$handleCallbackError(callback);
 
-  return utils.promiseOrCallback(callback, this.$wrapCallback(cb => {
+  return utils.promiseOrCallback(callback, cb => {
+    cb = this.$wrapCallback(cb);
     _populate(_this, docs, paths, cache, cb);
-  }), this.events);
+  }, this.events);
 };
 
 /*!
@@ -4603,6 +4759,7 @@ Model.$handleCallbackError = function(callback) {
   if (typeof callback !== 'function') {
     throw new MongooseError('Callback must be a function, got ' + callback);
   }
+
   const _this = this;
   return function() {
     try {
@@ -4613,8 +4770,22 @@ Model.$handleCallbackError = function(callback) {
   };
 };
 
+/*!
+ * ignore
+ */
+
 Model.$wrapCallback = function(callback) {
-  return callback;
+  const timeout = new TimeoutError();
+
+  return function(err) {
+    if (err != null && err.name === 'MongoTimeoutError') {
+      arguments[0] = timeout;
+      timeout.message = err.message;
+      Object.assign(timeout, err);
+    }
+
+    return callback.apply(null, arguments);
+  };
 };
 
 /**

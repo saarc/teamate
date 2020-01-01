@@ -696,10 +696,10 @@ Document.prototype.update = function update() {
 Document.prototype.updateOne = function updateOne(doc, options, callback) {
   const query = this.constructor.updateOne({_id: this._id}, doc, options);
   query._pre(cb => {
-    this.constructor._middleware.execPre('updateOne', this, [], cb);
+    this.constructor._middleware.execPre('updateOne', this, [this], cb);
   });
   query._post(cb => {
-    this.constructor._middleware.execPost('updateOne', this, [], {}, cb);
+    this.constructor._middleware.execPost('updateOne', this, [this], {}, cb);
   });
 
   if (this.$session() != null) {
@@ -1143,11 +1143,7 @@ Document.prototype.$set = function $set(path, val, type, options) {
         Array.isArray(schema.options[this.schema.options.typeKey]) &&
         schema.options[this.schema.options.typeKey].length &&
         schema.options[this.schema.options.typeKey][0].ref &&
-        Array.isArray(val) &&
-        val.length > 0 &&
-        val[0] instanceof Document &&
-        val[0].constructor.modelName &&
-        (schema.options[this.schema.options.typeKey][0].ref === val[0].constructor.baseModelName || schema.options[this.schema.options.typeKey][0].ref === val[0].constructor.modelName)) {
+        _isManuallyPopulatedArray(val, schema.options[this.schema.options.typeKey][0].ref)) {
       if (this.ownerDocument) {
         popOpts = { [populateModelSymbol]: val[0].constructor };
         this.ownerDocument().populated(this.$__fullPath(path),
@@ -1183,6 +1179,15 @@ Document.prototype.$set = function $set(path, val, type, options) {
     }
 
     if (!didPopulate && this.$__.populated) {
+      // If this array partially contains populated documents, convert them
+      // all to ObjectIds re: #8443
+      if (Array.isArray(val) && this.$__.populated[path]) {
+        for (let i = 0; i < val.length; ++i) {
+          if (val[i] instanceof Document) {
+            val[i] = val[i]._id;
+          }
+        }
+      }
       delete this.$__.populated[path];
     }
 
@@ -1207,6 +1212,34 @@ Document.prototype.$set = function $set(path, val, type, options) {
 
   return this;
 };
+
+/*!
+ * ignore
+ */
+
+function _isManuallyPopulatedArray(val, ref) {
+  if (!Array.isArray(val)) {
+    return false;
+  }
+  if (val.length === 0) {
+    return false;
+  }
+
+  for (const el of val) {
+    if (!(el instanceof Document)) {
+      return false;
+    }
+    const modelName = el.constructor.modelName;
+    if (modelName == null) {
+      return false;
+    }
+    if (el.constructor.modelName != ref && el.constructor.baseModelName != ref) {
+      return false;
+    }
+  }
+
+  return true;
+}
 
 /**
  * Sets the value of a path, or many paths.
@@ -1985,20 +2018,26 @@ Document.prototype.isDirectSelected = function isDirectSelected(path) {
  *       else // validation passed
  *     });
  *
- * @param {Object} optional options internal options
- * @param {Function} callback optional callback called after validation completes, passing an error if one occurred
+ * @param {Array|String} [pathsToValidate] list of paths to validate. If set, Mongoose will validate only the modified paths that are in the given list.
+ * @param {Object} [options] internal options
+ * @param {Function} [callback] optional callback called after validation completes, passing an error if one occurred
  * @return {Promise} Promise
  * @api public
  */
 
-Document.prototype.validate = function(options, callback) {
-  if (typeof options === 'function') {
-    callback = options;
+Document.prototype.validate = function(pathsToValidate, options, callback) {
+  if (typeof pathsToValidate === 'function') {
+    callback = pathsToValidate;
     options = null;
+    pathsToValidate = null;
+  } else if (typeof options === 'function') {
+    callback = options;
+    options = pathsToValidate;
+    pathsToValidate = null;
   }
 
   return utils.promiseOrCallback(callback, cb => {
-    this.$__validate(options, function(error) {
+    this.$__validate(pathsToValidate, options, function(error) {
       cb(error);
     });
   }, this.constructor.events);
@@ -2136,8 +2175,12 @@ function _getPathsToValidate(doc) {
  * ignore
  */
 
-Document.prototype.$__validate = function(options, callback) {
-  if (typeof options === 'function') {
+Document.prototype.$__validate = function(pathsToValidate, options, callback) {
+  if (typeof pathsToValidate === 'function') {
+    callback = pathsToValidate;
+    options = null;
+    pathsToValidate = null;
+  } else if (typeof options === 'function') {
     callback = options;
     options = null;
   }
@@ -2188,10 +2231,15 @@ Document.prototype.$__validate = function(options, callback) {
 
   // only validate required fields when necessary
   const pathDetails = _getPathsToValidate(this);
-  const paths = shouldValidateModifiedOnly ?
+  let paths = shouldValidateModifiedOnly ?
     pathDetails[0].filter((path) => this.isModified(path)) :
     pathDetails[0];
   const skipSchemaValidators = pathDetails[1];
+
+  if (Array.isArray(pathsToValidate)) {
+    const _pathsToValidate = new Set(pathsToValidate);
+    paths = paths.filter(p => _pathsToValidate.has(p));
+  }
 
   if (paths.length === 0) {
     return process.nextTick(function() {
@@ -2282,8 +2330,8 @@ Document.prototype.$__validate = function(options, callback) {
  * ####Example:
  *
  *     var err = doc.validateSync();
- *     if ( err ){
- *       handleError( err );
+ *     if (err) {
+ *       handleError(err);
  *     } else {
  *       // validation passed
  *     }

@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+
 var passport = require('passport');
 var User = require('../model/user');
 
@@ -9,7 +10,7 @@ passport.deserializeUser(User.deserializeUser());
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    res.render('new', {user: req.user, title: "new"});
+  res.render('test', { title: 'hello', user: req.user });
 });
 
 module.exports = router;

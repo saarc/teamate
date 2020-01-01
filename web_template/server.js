@@ -64,6 +64,9 @@ var joinRouter = require('./router/join');
 var logoutRouter = require('./router/logout');
 var itemsRouter = require('./router/items');
 var newRouter = require('./router/new');
+var testRouter = require('./router/test');
+var mypageRouter = require('./router/mypage');
+
 
 app.use('/', indexRouter);
 app.use('/login', loginRouter);
@@ -71,6 +74,8 @@ app.use('/join', joinRouter);
 app.use('/logout', logoutRouter);
 app.use('/items', itemsRouter);
 app.use('/new', newRouter);
+app.use('/test', testRouter);
+app.use('/mypage', mypageRouter);
 
 // Qeury all cars page
 app.get('/api/query', async function (req, res) {

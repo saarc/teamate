@@ -61,9 +61,6 @@ body{
 }
 
 .show-section{
-    position: absolute;
-    margin-left: -600px;
-    left:50%; 
     width: 1200px;
     padding: 40px 50px;
     text-align: center;
@@ -73,6 +70,30 @@ body{
     box-shadow: 2px 2px 2px lightgray;
 }
 
+
+.admin-section{
+    margin-top: 20px;
+    width: 1200px;
+    padding: 30px 30px;
+    text-align: center;
+    box-shadow: 2px 2px 2px lightgray;
+    background-color: white;
+}
+
+.member-image{
+    box-shadow: 2px 2px 2px lightgray;
+    height: 80px;
+    width: 80px;
+    display: table;
+}
+
+.member-name{
+    display: table-cell;
+    margin-top: 15px;
+    vertical-align:middle;
+    font-size: 14px;
+    font-weight: 300;
+}
 .login-form{
     margin-top: 50px;
 }
