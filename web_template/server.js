@@ -64,7 +64,7 @@ var joinRouter = require('./router/join');
 var logoutRouter = require('./router/logout');
 var itemsRouter = require('./router/items');
 var newRouter = require('./router/new');
-var testRouter = require('./router/test');
+var rateRouter = require('./router/rate');
 var mypageRouter = require('./router/mypage');
 
 
@@ -74,7 +74,7 @@ app.use('/join', joinRouter);
 app.use('/logout', logoutRouter);
 app.use('/items', itemsRouter);
 app.use('/new', newRouter);
-app.use('/test', testRouter);
+app.use('/rate', rateRouter);
 app.use('/mypage', mypageRouter);
 
 // Qeury all cars page
@@ -179,7 +179,6 @@ app.post('/api/createkey/', async function (req, res) {
     try {
 	var key = req.body.key;
 	var value = req.body.value;
-
 
         // Create a new file system based wallet for managing identities.
         const walletPath = path.join(process.cwd(), 'wallet');

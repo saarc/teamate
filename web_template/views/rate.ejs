@@ -1,0 +1,32 @@
+<html>
+    <head>
+        <base href="/">
+        <%- include('partials/head') %>
+    </head>
+
+    <body>
+        <%- include('partials/navbar') %>
+        <div class="section">
+            <div class="header">
+                <h1> Rate </h1>
+                <h2> 프로젝트를 끝내고 참가자들을 평가합니다! </h2>
+            </div>
+
+            <div>
+                프로젝트 제목: <%= item.name %> <br>
+                프로젝트 한줄 설명: <%= item.comment %> <br>
+                프로젝트 상세 설명: <%= item.detail %> <br>
+
+                <br>
+                참가한 사람들:
+                <%= participants.author %>
+                <form>
+                    <input type="text" placeholder="점수를 입력해주세요" >
+                </form>
+
+            </div>
+
+
+        </div>
+    </body>
+</html>

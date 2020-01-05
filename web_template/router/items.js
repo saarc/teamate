@@ -99,14 +99,20 @@ router.post('/:id/admit', function(req, res, next){
     })
 })
 
-//destroy a comment
-// router.delete('/:id/applies/:applyId', function(req,res){
-//     Post.update({_id:req.params.postId},{$pull:{comments:{_id:req.params.commentId}}},
-//         function(err,post){
-//         if(err) return res.json({success:false, message:err});
-//         res.redirect('/posts/'+req.params.postId+"?"+
-//                         req._parsedUrl.query.replace(/_method=(.*?)(&|$)/ig,""));
-//     });
-// }); 
+
+// rate user
+router.get('/:id/rate', function(req, res, next){
+    Item.findOne({ itemId: req.params.id }, (err, item)=>{
+        if(err) return console.log(err);
+        var applies = item.applies;
+        for(var i=0; i<applies.length; i++){
+            if(applies[i].status == "matched"){
+                var participants = applies[i]; 
+            }
+        }
+        res.render('rate', {title: "rate", item: item, user: req.user, participants: participants});
+    })
+})
+
 
 module.exports = router;

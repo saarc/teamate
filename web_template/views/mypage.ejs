@@ -15,18 +15,15 @@
 
 
             <h4 id="myitem"> 내가 만든 프로젝트 목록 </h4>
-            <% if (items !== null){items.forEach((item)=>{ %>ㅌ
+            <% if (items !== null){items.forEach((item)=>{ %>
                 <a href="/items/<%= item.itemId %>">
                     <%= item.name %>
-                    <% item.applies.forEach((apply)=>{ %>
-                        <%= apply.body %>
-                        <%= apply.author %>
-                    <% }) %>
                 </a>
+
             <%  })} %>
 
 
-            <h4>진행중인 프로젝트 목록</h4>
+            <h4>내가 참여중인 프로젝트 목록</h4>
 
 
             <h4>완료한 프로젝트 목록</h4>
@@ -34,3 +31,11 @@
         </div>
     </body>
 </html>
+
+
+<!-- 
+<%# item.applies.forEach((apply)=>{ %>
+    <%#= apply.body %>
+    <%#= apply.author %>
+<%# }) %> 
+-->
