@@ -1,32 +1,58 @@
 <html>
-    <head>
-        <base href="/">
-        <%- include('partials/head') %>
-    </head>
 
-    <body>
-        <%- include('partials/navbar') %>
-        <div class="section">
-            <div class="header">
-                <h1> Rate </h1>
-                <h2> 프로젝트를 끝내고 참가자들을 평가합니다! </h2>
-            </div>
+<head>
+    <base href="/">
+    <%- include('partials/head') %>
+</head>
 
-            <div>
-                프로젝트 제목: <%= item.name %> <br>
-                프로젝트 한줄 설명: <%= item.comment %> <br>
-                프로젝트 상세 설명: <%= item.detail %> <br>
-
-                <br>
-                참가한 사람들:
-                <%= participants.author %>
-                <form>
-                    <input type="text" placeholder="점수를 입력해주세요" >
-                </form>
-
-            </div>
-
-
+<body>
+    <%- include('partials/navbar') %>
+    <div class="section">
+        <div class="header">
+            <h1> Rate </h1>
+            <h2> 프로젝트를 끝내고 참가자들을 평가합니다! </h2>
         </div>
-    </body>
+
+        <div class="rate-section">
+            <table class="table table-hover" style="width:80%;">
+                <thead> 
+                    <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">email</th>
+                    <th scope="col">rate</th>
+                    </tr>
+                </thead>
+
+                <% for(var i=0; i<participants.length; i++){ %>
+                    <form action="/rate/<%= item.itemId %>" method="POST">
+                    <tbody>
+                        <tr>
+                            <th scope="row"> <%= i+1 %> </th>
+                            <td><%= participants[i].author %></td>
+                            <td>
+                                <input class="rate-form" type="text" name="score" placeholder="0~5 사이의 점수를 입력해주세요">
+                                <input class="rate-form" type="hidden" name="email" value="<%= participants[i].author %>">
+                                <input class="rate-form" type="hidden" name="item" value="<%= item.name %>">
+                                <input class="rate-form" type="hidden" name="length" value="<%= participants.length %>">
+                            </td>
+                        </tr>
+                        </tbody>
+                <% } %>
+            </table>
+
+                <button type="submit" class="btn btn-info">점수를 블록체인에 저장하고 프로젝트를 완료합니다.</button>
+            </form>
+        </div>
+    </div>
+</body>
+
 </html>
+
+
+<style>
+
+    .rate-form{
+        width: 50%;
+        padding: 5px 8px;
+    }
+</style>

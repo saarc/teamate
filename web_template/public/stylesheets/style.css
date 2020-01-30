@@ -78,6 +78,7 @@ body{
     text-align: center;
     box-shadow: 2px 2px 2px lightgray;
     background-color: white;
+
 }
 
 .member-image{
@@ -132,7 +133,8 @@ body{
 }
 
 .item-sub{
-    margin-bottom: 30px;
+    margin-bottom: 40px;
+    /* margin-top: 0px; */
 }
 .item-user{
     font-size: 16px;
@@ -147,4 +149,29 @@ body{
 
 .align-center{
     text-align: -webkit-center;
+}
+
+
+.newapply-form{
+    width: 80%;
+    margin-top: 15px;
+    padding: 10px 14px;
+
+}
+
+.newapply-btn{
+    display: block;
+    padding: 10px 40px;
+    margin-top: 20px;
+}
+
+.profile-section{
+    margin-bottom: 40px;
+}
+
+.profile-info{
+    display: block;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 30px;
 }

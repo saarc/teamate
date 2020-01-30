@@ -10,7 +10,7 @@ passport.deserializeUser(User.deserializeUser());
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-    Item.find({user: req.user.email}, function(err, items){
+    Item.find({}, function(err, items){
         if(err) return res.status(500).send({error: 'db find failure'})
 
         // var applies = items.applies;

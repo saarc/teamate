@@ -14,68 +14,70 @@
                 </div>
             </div>
         <% } else{ %>
-        <div class="align-center">
-            <div class="show-section">
-                <div class="item-name"> <%= item.name %></div>
-                <div class="item-comment"> <%= item.comment %></div>
-                <div class="item-sub">
-                <div class="item-user"> <%= item.user %></div>
-                <% if(user.email == item.user){ %>
-                    <div class="item-button"><a href="/items/delete/<%= item.itemId %>">삭제하기</a></div>
-                    <div class="item-button"><a href="/items/update/<%= item.itemId %>">수정하기</a></div>
+            <div class="align-center">
+                <div class="show-section">
+                    <div class="item-name"> <%= item.name %></div>
+                    <div class="item-comment"> <%= item.comment %></div>
+                    <div class="item-sub">
+                    <div class="item-user"> <%= item.user %></div>
+                    <% if(user.email == item.user){ %>
+                        <div class="item-button"><a href="/items/delete/<%= item.itemId %>">삭제하기</a></div>
+                        <div class="item-button"><a href="/items/update/<%= item.itemId %>">수정하기</a></div>
+                    </div>
+                    <% } %>
+                    <hr>
+                    <div class="item-detail"> <%= item.detail %></div>
+                    <% if(user.email == item.user){ %>
+                        <a href="/rate/<%= item.itemId %>"><button class="btn btn-warning" style="margin-top: 50px; float: right;">팀원 평가하러 가기</button></a>
+                    <% } %>
                 </div>
-                <% } %>
-                <hr>
-                <div class="item-detail"> <%= item.detail %></div>
-
-                <!-- <div style="text-align: left; margin-top: 40px;"> 
-                    <h5>현재 참여중인 사람들</h5>
-                    <img src="../../images/man.jpg" class="img-circle member-image" >
-                    <div class="member-name">이근호</div>
-                </div> -->
-
-                <a href="/items/<%= item.itemId %>/rate">프로젝트 완료</a>
             </div>
 
-            <div class="admin-section">
-            <% if(user.email == item.user){ %>
-                <h4> 프로젝트 참가신청 목록 </h4>
-                <table class="table table-striped" style="margin-top: 30px;">
-                    <tr>
-                        <th>내용</th>
-                        <th>아이템아이디</th>
-                        <th>신청자</th>
-                        <th>인덱스</th>
-                        <th>수락하기</th>
-                    </tr>
-                    <% item.applies.forEach(function (apply, index){ %>
-                        <tr>
-                            <td><%= apply.body %></td>
-                            <td><%= item.itemId %> </td>
-                            <td><%= apply.author %></td>
-                            <td><%= index %></td>
-                            <form action="/items/<%= item.itemId %>/admit" method="POST">
-                                <input type="hidden" value="<%= item.itemId %>" name="itemId">
-                                <td><button type="submit" class="btn btn-primary" name="index" value="<%= index %>" id="admit"> 수락하기 </button></td>
-                            </form>
-                        </tr>                    
-                    <% }) %>
-                </table>
 
-            <% }else{ %>
-                <form action="/items/<%= item.itemId %>/applies" method="post">
-                    <input type="hidden" name="user" value="<%= user.email %>">
-                    <textarea type="text" name="apply" placeholder="신청서를 입력해주세요"></textarea>
-                    <button type="submit">신청하기</button>
-                </form>    
-            <% } %>
+            <div class="align-center">
+                <div class="admin-section">
+                    <% if(user.email == item.user){ %>
+                        <h4> 프로젝트 참가신청 목록 </h4>
+                        <table class="table table-striped" style="margin-top: 30px;">
+                            <tr>
+                                <th>#</th>
+                                <th>내용</th>
+                                <th>신청자</th>
+                                <th>상태</th>
+                                <th>수락하기</th>
+                            </tr>
+                            <% item.applies.forEach(function (apply, index){ %>
+                                <tr>
+                                    <td><%= index + 1 %></td>
+                                    <td><%= apply.body %></td>
+                                    <td><%= apply.author %></td>
+                                    <td><%= apply.status %></td>
+                                    <form action="/items/<%= item.itemId %>/admit" method="POST">
+                                        <input type="hidden" value="<%= item.itemId %>" name="itemId">
+                                        <% if(apply.status == "matched"){ %>
+                                            <td>이미 수락되었습니다.</td>
+                                        <% }else{ %>
+                                            <td><button type="submit" class="btn btn-primary" name="index" value="<%= index %>" id="admit"> 수락하기 </button></td>
+                                        <% } %>
+                                    </form>
+                                </tr>                    
+                            <% }) %>
+                        </table>
+                    <% }else{ %>
+                        <h4>프로젝트 참가 신청하기</h4>
+                        <form action="/items/<%= item.itemId %>/applies" method="post">
+                            <input type="hidden" name="user" value="<%= user.email %>">
+                            <textarea type="text" class="newapply-form" rows="5" name="apply" placeholder="신청서를 입력해주세요"></textarea>
+                            <div class="align-center">
+                                <button class="btn btn-info newapply-btn" type="submit">신청하기</button>
+                            </div>
+                        </form>  
+                    <% } %>
+                </div>
             </div>
-        </div>
         <% } %>
     </body>
-</html>
-
-
+</html> 
 
 <script>
     $("#admit").click(()=>{
