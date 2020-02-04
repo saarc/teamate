@@ -22,5 +22,4 @@ itemSchema.plugin(autoIncrement.plugin,{
 	increment : 1 // 증가
 });
 
-
 module.exports = mongoose.model('Item', itemSchema);

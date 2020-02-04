@@ -19,4 +19,5 @@ router.post('/', function(req, res){
   console.log(test);
   res.render('index', {title: test, user: req.user});
 });
+
 module.exports = router;

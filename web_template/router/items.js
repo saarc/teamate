@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var passport = require('passport');
+
 var User = require('../model/user');
 var Item = require('../model/item');
 
@@ -28,8 +29,8 @@ router.get('/:id', function(req, res, next){
 router.get('/update/:id', (req, res) => {
     Item.findOne({ id: req.params.itemId }, (err, item) => {
       if(err) return res.json(err);
-      res.render('update', { user: req.user, item: item });
-    });
+      res.render('update', { title: "update",  user: req.user, item: item });
+    }); 
 });
 
 router.post('/:id', (req, res) => {
@@ -50,6 +51,9 @@ router.post('/', function(req, res, next){
     item.comment = req.body.comment;
     item.detail = req.body.detail;
     item.user = req.user.email;
+
+    console.log(item);
+
     item.save(function (err, item){
         if(err) return console.error(err);
         console.log("등록 성공");
@@ -69,22 +73,13 @@ router.get('/delete/:id', (req, res) => {
 //create an apply
 router.post('/:id/applies', function(req, res, next){
     var newapply = { body: req.body.apply, author: req.body.user }
-
     console.log(newapply)
     Item.findOne({ itemId: req.params.id }, function(err, item){
-
         item.applies.push(newapply);
         item.save();
         console.log("신청 성공");
         res.redirect('/');
     })
-
-    // Item.updateOne({ id: req.params.id }, 
-    //     { $push: { applies: { body: req.body.apply, author: req.body.user }}},
-    //      function(err, item){
-    //     if(err) return res.json({success:false, message:err});
-    //     res.redirect('/');
-    // });
 });
 
 // admit an apply
@@ -98,7 +93,5 @@ router.post('/:id/admit', function(req, res, next){
         res.redirect('/')
     })
 })
-
-
 
 module.exports = router;
