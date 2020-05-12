@@ -19,7 +19,7 @@ cd network
 
 # -chaincode
 ## 3. chaincode install, instsantiate and test(invoke, query, invoke)
-./cc_tea.sh
+./cc_tea.sh instantiate v1.0
 
 # -application
 cd ../application
