@@ -21,8 +21,8 @@ cd network
 ## 3. chaincode install, instsantiate and test(invoke, query, invoke)
 ./cc_tea.sh instantiate v1.0
 
-# -application
-cd ../application
+# -prototype
+cd ../prototype
 
 ## 4. nodejs module install
 npm install
