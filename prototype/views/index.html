@@ -100,29 +100,7 @@
             if(status != null){
                 $('#find-alert').append("<div id='success' class='alert alert-success'>조회를 성공했습니다!</div>");
                 $('#find-alert').fadeOut(2000);
-                // 넘어오는 data 값 (user1)
-                // {
-                //     "average": 3.7500000024999998,
-                //     "rates": [
-                //         {
-                //         "projecttitle": "p1",
-                //         "score": 5
-                //         },
-                //         {
-                //         "projecttitle": "p2",
-                //         "score": 4
-                //         },
-                //         {
-                //         "projecttitle": "p4",
-                //         "score": 5
-                //         },
-                //         {
-                //         "projecttitle": "p3",
-                //         "score": 1
-                //         }
-                //     ],
-                //     "user": "user1",
-                // }
+
                 // stringify는 json객체를 string으로, parse는 string을 json객체로 변환 시켜줌
                 const test = JSON.stringify(data)
                 const parsedData = JSON.parse(test)
