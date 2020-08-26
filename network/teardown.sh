@@ -1,9 +1,5 @@
 #!/bin/bash
 #
-# Copyright IBM Corp All Rights Reserved
-#
-# SPDX-License-Identifier: Apache-2.0
-#
 # Exit on first error, print all commands.
 set -e
 
@@ -14,7 +10,19 @@ set -e
 rm -f ~/.hfc-key-store/*
 
 # remove chaincode docker images
-docker rm -f $(docker ps -aq)
-docker rmi -f $(docker images dev-* -q)
+
+cons=$(docker ps -aq)
+if [ -n "$cons" ];  then
+        docker rm -f $(docker ps -aq)
+fi
+
+imgs=$(docker images dev-* -q)
+if [ -n "$imgs" ];  then
+        docker rmi -f $(docker images dev-* -q)
+fi
+
+docker network rm net_basic
+
+
 
 # Your system is now clean
