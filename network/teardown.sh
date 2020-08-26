@@ -21,7 +21,14 @@ if [ -n "$imgs" ];  then
         docker rmi -f $(docker images dev-* -q)
 fi
 
-docker network rm net_basic
+netb=$(docker network ls | grep net_basic)
+if [ -n "$netb" ];  then
+        docker network rm net_basic
+fi
+
+docker ps -a
+docker images dev-*
+docker network ls
 
 
 
