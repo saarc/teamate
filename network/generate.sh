@@ -1,10 +1,7 @@
 #!/bin/sh
 #
-# Copyright IBM Corp All Rights Reserved
 #
-# SPDX-License-Identifier: Apache-2.0
-#
-export PATH=$GOPATH/src/github.com/hyperledger/fabric/build/bin:${PWD}/../bin:${PWD}:$PATH
+export PATH=$GOPATH/src/github.com/hyperledger/fabric/build/bin:${HOME}/fabric-samples/bin:${PWD}:$PATH
 export FABRIC_CFG_PATH=${PWD}
 CHANNEL_NAME=mychannel
 
