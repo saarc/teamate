@@ -1,4 +1,10 @@
 #!/bin/bash
+
+if [ $# -ne 2 ]; then
+	echo "Arguments are missing. ex) ./cc_tea.sh instantiate 1.0.0"
+	exit 1
+fi
+
 instruction=$1
 version=$2
 
