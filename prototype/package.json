@@ -10,9 +10,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "express": "^4.17.1",
+    "express": "4.17.1",
     "fabric-network": "^1.4.4",
     "fabric-ca-client": "^1.4.4",
-    "jquery": "^3.4.1"
+    "jquery": "3.5.1",
+    "body-parser": "1.19.0"
   }
 }
