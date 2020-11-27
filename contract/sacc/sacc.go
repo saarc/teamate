@@ -7,8 +7,11 @@
 package main
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"strconv"
+	"time"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	"github.com/hyperledger/fabric/protos/peer"
@@ -45,6 +48,8 @@ func (t *SimpleAsset) Invoke(stub shim.ChaincodeStubInterface) peer.Response {
 		result, err = get(stub, args)
 	} else if fn == "getAllKeys" {
 		result, err = getAllKeys(stub)
+	} else if fn == "getHistoryForKey" {
+		result, err = getHistoryForKey(stub, args)
 	} else {
 		return shim.Error("Not supported chaincode function.")
 	}
@@ -121,6 +126,67 @@ func getAllKeys(stub shim.ChaincodeStubInterface) (string, error) {
 	fmt.Println(buffer)
 
 	return string(buffer), nil
+}
+
+func getHistoryForKey(stub shim.ChaincodeStubInterface, args []string) (string, error) {
+
+	if len(args) < 1 {
+		return "", fmt.Errorf("Incorrect number of arguments. Expecting 1")
+	}
+	keyName := args[0]
+	// 로그 남기기
+	fmt.Println("getHistoryForKey:" + keyName)
+
+	resultsIterator, err := stub.GetHistoryForKey(keyName)
+	if err != nil {
+		return "", err
+	}
+	defer resultsIterator.Close()
+
+	// buffer is a JSON array containing historic values for the marble
+	var buffer bytes.Buffer
+	buffer.WriteString("[")
+
+	bArrayMemberAlreadyWritten := false
+	for resultsIterator.HasNext() {
+		response, err := resultsIterator.Next()
+		if err != nil {
+			return "", err
+		}
+		if bArrayMemberAlreadyWritten == true {
+			buffer.WriteString(",")
+		}
+		buffer.WriteString("{\"TxId\":")
+		buffer.WriteString("\"")
+		buffer.WriteString(response.TxId)
+		buffer.WriteString("\"")
+
+		buffer.WriteString(", \"Value\":")
+		if response.IsDelete {
+			buffer.WriteString("null")
+		} else {
+			buffer.WriteString(string(response.Value))
+		}
+
+		buffer.WriteString(", \"Timestamp\":")
+		buffer.WriteString("\"")
+		buffer.WriteString(time.Unix(response.Timestamp.Seconds, int64(response.Timestamp.Nanos)).String())
+		buffer.WriteString("\"")
+
+		buffer.WriteString(", \"IsDelete\":")
+		buffer.WriteString("\"")
+		buffer.WriteString(strconv.FormatBool(response.IsDelete))
+		buffer.WriteString("\"")
+
+		buffer.WriteString("}")
+		bArrayMemberAlreadyWritten = true
+	}
+	buffer.WriteString("]")
+
+	// 로그 남기기
+	fmt.Println("getHistoryForKey returning:\n" + buffer.String() + "\n")
+
+	return (string)(buffer.Bytes()), nil
 }
 
 // main function starts up the chaincode in the container during instantiate
