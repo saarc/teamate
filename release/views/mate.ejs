@@ -4,20 +4,19 @@
     </head>
 
     <body>
-        <%- include('partials/navbar') %>
-
+        <%- include('partials/navbar') %>        
         <div class="container">
             <div class="row">
-            <% if (user !== null){ user.forEach((user)=>{ %>
+            <% users.forEach((u)=>{ %>
                 <div class="col-md-4">
                     <!-- <a href="/project/<%#= project._id %>"> -->
                         <div class="card">
                             <img src="./images/note.jpg" class="card-image">
                             <div class="card-title">
-                                <%= user.email %>
+                                <%= u.email %>
                             </div>
                             <div class="card-content">
-                                <!-- <%= user.detail %> -->
+                                <!-- <%#= user.detail %> -->
                             </div>
                             <div class="card-date">
                                 <!-- <%#= project.createdAt %> -->
@@ -25,7 +24,7 @@
                         </div>
                     <!-- </a> -->
                 </div>
-                <%  })} %>
+            <% }) %>
             </div>
         </div>
     

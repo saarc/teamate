@@ -5,12 +5,11 @@ var router = express.Router();
 var User = require('../model/user')
 var Project = require('../model/project')
 
-
 router.get('/', function (req, res) {
   var msg;
   var errMsg = req.flash('error');
   if(errMsg) msg = errMsg;
- 
+
   Project.find({}, function(err, project){
     User.find({}, function(err, user){
       if(req.user == undefined){
@@ -22,9 +21,4 @@ router.get('/', function (req, res) {
   })
 });
 
-router.get("/logout",function(req,res){
-  req.logout();
-  res.redirect("/");
-});
-
-module.exports = router;
+module.exports = router; 

@@ -8,11 +8,17 @@
 
   /* public */
   body {
-    font-family: 'NanumSquare', sans-serif;
-    /* font: 14px "Lucida Grande", ]Helvetica, Arial, sans-serif; */
-    /* 'Noto Sans', */
+    font-family: 'Noto Sans KR', sans-serif;
   }
 
+  a{
+    text-decoration: none;
+    color: black;
+  }
+
+  a:hover{
+    color: black;
+  }
 
   p{
     color: #A5A5A7;
@@ -23,8 +29,8 @@
 
   .image-cover{
     position: relative;
-    height: 600px;
-    background-position: 50% 45%;
+    height: 800px;
+    background-position: 50% 55%;
     background-size: cover;
   }
 
@@ -146,9 +152,9 @@
   .title{
     margin-top: 40px;
     text-align: left;
-    font-size: 20px;
+    font-size: 22px;
     line-height: 40px;
-    font-weight: 900;
+    font-weight: 400;
   }
 
   .card{

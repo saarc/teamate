@@ -1,9 +1,6 @@
-// import mongoose from 'mongoose';
-// import passportLocalMongoose from 'passport-local-mongoose';
 const passportLocalMongoose = require('passport-local-mongoose');
-
 const mongoose = require('mongoose');
-// var bcrypt = require('bcrypt-nodejs'); // 암호화를 위한 모듈
+var bcrypt = require('bcrypt-nodejs'); // 암호화를 위한 모듈
 
 const userSchema = new mongoose.Schema({
   email: {type: String, unique: true, required: true},
@@ -13,14 +10,18 @@ const userSchema = new mongoose.Schema({
 });
 
 
-userSchema.methods.comparePassword = function(inputPassword, cb) {
-  if (inputPassword === this.password) {
-    cb(null, true);
-  } else {
-    cb('error');
-  }
+// hash 생성
+userSchema.methods.generateHash = function(password){
+  return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
 };
 
-userSchema.plugin(passportLocalMongoose, { usernameField : 'email'});
+// 값 비교
+userSchema.methods.validPassword = function(password){
+  return bcrypt.compareSync(password, this.password)
+};
 
+userSchema.plugin(passportLocalMongoose, {
+   usernameField : 'email'
+  });
+  
 module.exports = mongoose.model('User', userSchema);

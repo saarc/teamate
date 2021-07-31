@@ -2,7 +2,7 @@
     <%- include('partials/head') %>
 </head>
 <body style="background-color: #fafafa;">
-        <%- include('partials/black-navbar') %>
+        <%- include('partials/navbar') %>
 
     <div class="section">
         <div class="form-section">
@@ -11,10 +11,10 @@
             </div>
 
             <form action="/login" method="post">
-                <div class="form-new"> 이메일<br>
+                <div class="form-new"> 이메일 <br>
                     <input class="form-input" type="text" name="email" placeholder="email을 입력해주세요"> <br>
                 </div>
-                <div class="form-new"> 비밀번호 <br>
+                <div class="form-new"> 패스워드 <br>
                     <input class="form-input" type="password" name="password" placeholder="비밀번호를 입력해주세요"> <br>
                 </div>
         
@@ -29,30 +29,3 @@
         </div>
     </div>
 </body>
-
-
-<!-- <div class="result"> </div>
-
-<script>
-    document.querySelector('.ajaxsend').addEventListener('click',
-        function(){
-        var username = document.getElementsByName('username')[0].value;
-        var password =  document.getElementsByName('password')[0].value;
-        sendAjax('http://210.107.192.145:8080/login', {'username' : username, 'password': password})
-        })
-
-        function sendAjax(url, data){
-            data = JSON.stringify(data);
-            var xhr = new XMLHttpRequest();
-            xhr.open('POST', url);
-            xhr.setRequestHeader('Content-Type', "application/json");
-            xhr.send(data);
-
-            xhr.addEventListener('load', function(){
-                var result = JSON.parse(xhr.responseText);
-                var resultDiv = document.querySelector(".result");
-                if(result.username) resultDiv.innerHTML = "welcome! " + result.username;
-                else resultDiv.innerHTML = result.name;
-            })  
-        }
-</script> -->
