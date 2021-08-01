@@ -2,14 +2,7 @@
 const express = require('express');
 const app = express();
 var bodyParser = require('body-parser');
-
-// Hyperledger Bridge
-const { FileSystemWallet, Gateway } = require('fabric-network');
-const fs = require('fs');
 const path = require('path');
-const ccpPath = path.resolve(__dirname, '..', 'network' ,'connection.json');
-const ccpJSON = fs.readFileSync(ccpPath, 'utf8');
-const ccp = JSON.parse(ccpJSON);
 
 // Constants
 const PORT = 9000;
@@ -24,7 +17,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // configure app to use body-parser
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Passport
 var passport = require('passport')
@@ -54,7 +47,6 @@ db.once('open', function(){
 
 // 로그인되어 있는지 확인하는 미들웨어 
 app.use(function(req,res,next){
-
     // res.locals로 등록된 변수는 ejs 어디에서나 사용가능
     res.locals.isAuthenticated = req.isAuthenticated();
     res.locals.user = req.user;

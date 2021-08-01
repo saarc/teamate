@@ -4,30 +4,36 @@
     </head>
 
     <body>
-        <%- include('partials/navbar') %>        
-        <div class="container">
-            <div class="row">
-            <% users.forEach((u)=>{ %>
-                <div class="col-md-4">
-                    <!-- <a href="/project/<%#= project._id %>"> -->
-                        <div class="card">
-                            <img src="./images/note.jpg" class="card-image">
-                            <div class="card-title">
-                                <%= u.email %>
+        <%- include('partials/navbar') %>    
+        <div class="image-cover" style="background-image: url('../images/main.jpg'); height: 450px;" >
+            <div class="filter"></div>
+            <div class="main-text"> Mate </div>
+        </div>    
+        <div class="section">
+            <div class="container">
+                <div class="row">
+                <% users.forEach((u)=>{ %>
+                    <div class="col-md-4">
+                        <!-- <a href="/project/<%#= project._id %>"> -->
+                            <div class="card">
+                                <img src="./images/note.jpg" class="card-image">
+                                <div class="card-title">
+                                    <%= u.email %>
+                                </div>
+                                <div class="card-content">
+                                    <!-- <%#= user.detail %> -->
+                                </div>
+                                <div class="card-date">
+                                    <!-- <%#= project.createdAt %> -->
+                                </div>
                             </div>
-                            <div class="card-content">
-                                <!-- <%#= user.detail %> -->
-                            </div>
-                            <div class="card-date">
-                                <!-- <%#= project.createdAt %> -->
-                            </div>
-                        </div>
-                    <!-- </a> -->
+                        <!-- </a> -->
+                    </div>
+                <% }) %>
                 </div>
-            <% }) %>
             </div>
         </div>
-    
+
         <%- include('partials/footer')  %>
     </body>
 </html>

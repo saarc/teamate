@@ -26,6 +26,9 @@
         <a class="nav-link" href="/project">project</a>
       </li>
     </ul>
+
+    <!-- server.js에서 등록한 유저 로그인여부 미들웨어의 isAuthenticated 변수 -->
+    <!-- 로그인이 되어있으면 유저이메일과 로그아웃 링크를 보여주고 -->
     <% if(isAuthenticated){ %>
       <ul class="navbar-nav ml-auto">
         <li class="nav-item">
@@ -35,6 +38,7 @@
           <a class="nav-link" href="/logout">로그아웃하기</a>
         </li>
       </ul>
+    <!-- 로그인이 되어있지 않으면 로그인, 회원가입 메뉴를 보여준다. -->
     <% } else{ %> 
       <ul class="navbar-nav ml-auto">
         <li class="nav-item">
