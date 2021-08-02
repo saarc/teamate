@@ -17,7 +17,7 @@ passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
 
 router.get('/', function(req, res){
-    res.render('join', {title: "join"})
+      res.render('join', {title: "join"})
 });
 
 passport.use('local-join', new LocalStrategy({ // local-signup이라는 strategy 생성
@@ -31,7 +31,7 @@ passport.use('local-join', new LocalStrategy({ // local-signup이라는 strategy
         console.log("중복된 아이디입니다.")
         return done(null, false, req.flash('signupMessage', '중복된 아이디입니다.'));
       }
-      
+
       // 저장할 유저 객체 생성 
       const newUser = new User();
       newUser.email = email;
@@ -42,10 +42,9 @@ passport.use('local-join', new LocalStrategy({ // local-signup이라는 strategy
       newUser.save(function (err) { // 새 유저를 DB에 저장
         if (err) throw err;
         console.log("회원가입 성공")
-        return done(null, newUser); // serializeUser에 user를 넘겨준다 (serializeUser는 세션을 만들어주는 함수, passport/passport.js에 있음)
+        return done(null, newUser); // serializeUser에 user를 넘겨줌 
       });
-
-
+      
       // 유저를 블록체인에 저장
       const walletPath = path.join(process.cwd(), 'wallet');
       const wallet = new FileSystemWallet(walletPath);

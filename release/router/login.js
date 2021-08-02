@@ -15,18 +15,14 @@ router.get('/', function(req, res){
     res.render('login', {title: "login"})
 });
 
-// post요청이 들어오면 local-login 전략을 실행한다.
-router.post('/', passport.authenticate('local-login', { failureRedirect: '/login', failureFlash: true }), function(req, res) {
-    console.log("로그인 성공")
-    res.redirect('/');
-}); 
-
-// local-join이라는 strategy를 생성
+// local-login이라는 strategy를 생성
 passport.use('local-login', new LocalStrategy({
     usernameField: 'email',   // username으로 email을 사용하겠다고 선언
     passwordField: 'password',
     passReqToCallback: true // 인증을 수행하는 인증 함수로 HTTP request를 그대로 전달할지 여부를 결정
-  }, function(req, email, password, done){ // 로그인이 성공하면 done함수가 실행되고, done의 리턴값이 serializeUser함수의 인자로 들어가 세션을 저장한다 
+
+    // 로그인이 성공하면 done함수가 실행되고, done의 리턴값이 serializeUser함수의 인자로 들어가 세션을 저장한다 
+  }, function(req, email, password, done){ 
 
     // 데이터베이스의 User 테이블에서 로그인하려는 email을 검색
     User.findOne({'email': email}, function(err, user){
@@ -45,5 +41,12 @@ passport.use('local-login', new LocalStrategy({
       return done(null, user); 
     });
   })); 
+
+// post요청이 들어오면 local-login 전략을 실행한다.
+router.post('/', passport.authenticate('local-login', 
+  { failureRedirect: '/login', failureFlash: true }), function(req, res) {
+  console.log("로그인 성공")
+  res.redirect('/');
+}); 
 
 module.exports = router;
