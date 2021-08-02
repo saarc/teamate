@@ -1,7 +1,6 @@
 // ExpressJS Setup
 const express = require('express');
 const app = express();
-var bodyParser = require('body-parser');
 
 // Hyperledger Bridge
 const { FileSystemWallet, Gateway } = require('fabric-network');
@@ -19,8 +18,8 @@ const HOST = '0.0.0.0';
 app.use(express.static(path.join(__dirname, 'views')));
 
 // configure app to use body-parser
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 // main page routing
 app.get('/', (req, res)=>{
