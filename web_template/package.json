@@ -6,7 +6,7 @@
   "dependencies": {
     "connect-flash": "^0.1.1",
     "ejs": "^3.0.1",
-    "express": "^4.17.1",
+    "express": "^4.17.3",
     "express-session": "^1.17.0",
     "fabric-network": "^1.4.4",
     "mongoose": "^5.8.2",
